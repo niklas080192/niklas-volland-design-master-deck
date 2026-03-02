@@ -5,19 +5,19 @@ import gradientBlob from "@/assets/gradient-blob.png";
 const TitleSlide = () => {
   return (
     <SlideLayout variant="dark">
-      {/* Gradient blob - more present */}
+      {/* Gradient blob - anchored to bottom */}
       <img
         src={gradientBlob}
         alt=""
-        className="absolute -right-[100px] -top-[100px] w-[1000px] h-[1000px] opacity-50 pointer-events-none"
+        className="absolute right-[-100px] bottom-[-400px] w-[1000px] h-[1000px] opacity-50 pointer-events-none"
       />
 
-      {/* Subtle grid pattern */}
+      {/* Subtle grid pattern - small boxes */}
       <div
         className="absolute inset-0 opacity-[0.03] pointer-events-none"
         style={{
           backgroundImage: "linear-gradient(hsl(0 0% 100%) 1px, transparent 1px), linear-gradient(90deg, hsl(0 0% 100%) 1px, transparent 1px)",
-          backgroundSize: "80px 80px",
+          backgroundSize: "32px 32px",
         }}
       />
 

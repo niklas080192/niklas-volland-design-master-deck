@@ -13,14 +13,6 @@ const ImageTextSlide = ({
 }: ImageTextSlideProps) => {
   return (
     <SlideLayout variant="dark">
-      {/* Grid */}
-      <div
-        className="absolute inset-0 opacity-[0.03] pointer-events-none"
-        style={{
-          backgroundImage: "linear-gradient(hsl(0 0% 100%) 1px, transparent 1px), linear-gradient(90deg, hsl(0 0% 100%) 1px, transparent 1px)",
-          backgroundSize: "80px 80px",
-        }}
-      />
 
       {/* Logo */}
       <div className="absolute top-[60px] right-[100px]">

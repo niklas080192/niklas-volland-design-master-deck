@@ -17,21 +17,34 @@ const ContentSlide = ({
 }: ContentSlideProps) => {
   return (
     <SlideLayout variant="dark">
+      {/* Grid */}
+      <div
+        className="absolute inset-0 opacity-[0.03] pointer-events-none"
+        style={{
+          backgroundImage: "linear-gradient(hsl(0 0% 100%) 1px, transparent 1px), linear-gradient(90deg, hsl(0 0% 100%) 1px, transparent 1px)",
+          backgroundSize: "80px 80px",
+        }}
+      />
+
       {/* Logo top-right */}
       <div className="absolute top-[60px] right-[100px]">
         <img src={logoWhite} alt="NV" className="h-[36px] opacity-40" />
       </div>
 
       <div className="absolute inset-0 flex flex-col justify-center px-[100px]">
-        <h2 className="text-5xl font-bold tracking-tight mb-[60px]">{title}</h2>
+        <div className="flex items-center gap-[16px] mb-[16px]">
+          <span className="px-[14px] py-[5px] rounded-full border border-slide-fg/10 text-[13px] text-slide-muted">Overview</span>
+        </div>
+        <h2 className="text-5xl font-bold tracking-tight mb-[60px] text-slide-fg">{title}</h2>
 
-        <div className="space-y-[36px] max-w-[1400px]">
+        <div className="space-y-[32px] max-w-[1400px]">
           {bullets.map((bullet, i) => (
-            <div key={i} className="flex items-start gap-[24px]">
-              <div
-                className="mt-[6px] w-[12px] h-[12px] rounded-full shrink-0"
-                style={{ background: "var(--slide-gradient)" }}
-              />
+            <div key={i} className="flex items-start gap-[24px] group">
+              <div className="mt-[4px] w-[32px] h-[32px] rounded-lg bg-slide-surface border border-slide-fg/5 flex items-center justify-center shrink-0">
+                <span className="text-[14px] text-slide-primary font-semibold">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+              </div>
               <p className="text-2xl font-light leading-relaxed text-slide-fg/90">
                 {bullet}
               </p>
@@ -40,9 +53,9 @@ const ContentSlide = ({
         </div>
       </div>
 
-      {/* Page indicator */}
-      <div className="absolute bottom-[60px] right-[100px]">
-        <div className="w-[60px] h-[3px] rounded-full" style={{ background: "var(--slide-gradient)" }} />
+      {/* Bottom accent */}
+      <div className="absolute bottom-[60px] right-[100px] flex items-center gap-[12px]">
+        <div className="w-[40px] h-[3px] rounded-full bg-slide-primary" />
       </div>
     </SlideLayout>
   );

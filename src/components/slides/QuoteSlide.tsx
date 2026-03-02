@@ -14,20 +14,11 @@ const QuoteSlide = ({
 }: QuoteSlideProps) => {
   return (
     <SlideLayout variant="dark">
-      {/* Gradient blob - more present */}
+      {/* Gradient blob - cut by bottom */}
       <img
         src={gradientBlob}
         alt=""
-        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[1200px] h-[1200px] opacity-25 pointer-events-none"
-      />
-
-      {/* Grid */}
-      <div
-        className="absolute inset-0 opacity-[0.03] pointer-events-none"
-        style={{
-          backgroundImage: "linear-gradient(hsl(0 0% 100%) 1px, transparent 1px), linear-gradient(90deg, hsl(0 0% 100%) 1px, transparent 1px)",
-          backgroundSize: "80px 80px",
-        }}
+        className="absolute left-1/2 -translate-x-1/2 bottom-[-500px] w-[1200px] h-[1200px] opacity-25 pointer-events-none"
       />
 
       <div className="absolute inset-0 flex flex-col justify-center items-center text-center px-[200px]">

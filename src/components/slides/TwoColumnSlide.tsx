@@ -24,7 +24,7 @@ const TwoColumnSlide = ({
       </div>
 
       <div className="absolute inset-0 flex flex-col justify-center px-[100px]">
-        <span className="inline-block px-[14px] py-[5px] rounded-full border border-slide-fg/10 text-[13px] text-slide-muted mb-[20px] w-fit">Comparison</span>
+        <span className="inline-block px-[20px] py-[8px] rounded-full border border-slide-fg/10 text-[15px] text-slide-muted mb-[20px] w-fit">Comparison</span>
         <h2 className="text-5xl font-bold tracking-tight mb-[64px] text-slide-fg">{title}</h2>
 
         <div className="flex gap-[40px]">

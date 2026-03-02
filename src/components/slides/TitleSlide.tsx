@@ -12,12 +12,15 @@ const TitleSlide = () => {
         className="absolute right-[-100px] bottom-[-400px] w-[1000px] h-[1000px] opacity-50 pointer-events-none"
       />
 
-      {/* Subtle grid pattern - small boxes */}
+      {/* Subtle grid pattern - fades to bottom */}
       <div
-        className="absolute inset-0 opacity-[0.03] pointer-events-none"
+        className="absolute inset-0 pointer-events-none"
         style={{
           backgroundImage: "linear-gradient(hsl(0 0% 100%) 1px, transparent 1px), linear-gradient(90deg, hsl(0 0% 100%) 1px, transparent 1px)",
           backgroundSize: "32px 32px",
+          opacity: 0.02,
+          maskImage: "linear-gradient(to bottom, white 0%, transparent 70%)",
+          WebkitMaskImage: "linear-gradient(to bottom, white 0%, transparent 70%)",
         }}
       />
 
@@ -27,9 +30,9 @@ const TitleSlide = () => {
       </div>
 
       {/* Pills */}
-      <div className="absolute top-[60px] right-[100px] flex gap-[12px]">
-        <span className="px-[20px] py-[8px] rounded-full border border-slide-fg/10 text-[14px] text-slide-muted">Keynote</span>
-        <span className="px-[20px] py-[8px] rounded-full border border-slide-fg/10 text-[14px] text-slide-muted">2025</span>
+      <div className="absolute top-[60px] right-[100px] flex gap-[14px]">
+        <span className="px-[24px] py-[10px] rounded-full border border-slide-fg/10 text-[16px] text-slide-muted">Keynote</span>
+        <span className="px-[24px] py-[10px] rounded-full border border-slide-fg/10 text-[16px] text-slide-muted">2025</span>
       </div>
 
       {/* Main title */}

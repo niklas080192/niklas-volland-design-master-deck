@@ -30,8 +30,7 @@ const SlideLayout = ({ children, variant = "dark", slideIndex, totalSlides }: Sl
             : undefined
         }
       >
-        {/* Animated Glow Line */}
-        <div className="slide-glow-line" />
+        {/* Noise Texture */}
 
         {/* Noise Texture */}
         {variant !== "light" && <div className="slide-noise" />}

@@ -60,7 +60,7 @@ const TitleSlide = ({ slideIndex, totalSlides }: TitleSlideProps) => {
         <motion.h1 variants={fadeUp} className="text-7xl font-bold tracking-tight leading-none max-w-[1200px] text-slide-fg">
           Präsentationstitel
           <br />
-          <span className="text-slide-primary">hier einfügen</span>
+          hier einfügen
         </motion.h1>
         <motion.p variants={fadeUp} className="text-2xl text-slide-muted mt-[40px] max-w-[700px] font-light">
           Untertitel oder kurze Beschreibung deiner Präsentation

@@ -10,15 +10,17 @@ import QuoteSlide from "@/components/slides/QuoteSlide";
 import TwoColumnSlide from "@/components/slides/TwoColumnSlide";
 import ClosingSlide from "@/components/slides/ClosingSlide";
 
+const totalSlides = 8;
+
 const slides: ReactNode[] = [
-  <TitleSlide key="title" />,
-  <SectionSlide key="section" />,
-  <ContentSlide key="content" />,
-  <ImageTextSlide key="imgtext" />,
-  <TwoColumnSlide key="twocol" />,
-  <StatsSlide key="stats" />,
-  <QuoteSlide key="quote" />,
-  <ClosingSlide key="closing" />,
+  <TitleSlide key="title" slideIndex={0} totalSlides={totalSlides} />,
+  <SectionSlide key="section" slideIndex={1} totalSlides={totalSlides} />,
+  <ContentSlide key="content" slideIndex={2} totalSlides={totalSlides} />,
+  <ImageTextSlide key="imgtext" slideIndex={3} totalSlides={totalSlides} />,
+  <TwoColumnSlide key="twocol" slideIndex={4} totalSlides={totalSlides} />,
+  <StatsSlide key="stats" slideIndex={5} totalSlides={totalSlides} />,
+  <QuoteSlide key="quote" slideIndex={6} totalSlides={totalSlides} />,
+  <ClosingSlide key="closing" slideIndex={7} totalSlides={totalSlides} />,
 ];
 
 const Index = () => {

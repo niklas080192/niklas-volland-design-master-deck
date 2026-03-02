@@ -1,18 +1,33 @@
+import { motion } from "framer-motion";
 import SlideLayout from "./SlideLayout";
 import logoWhite from "@/assets/logo-white-wide.png";
 import gradientBlob from "@/assets/gradient-blob.png";
 
-const TitleSlide = () => {
+const container = { animate: { transition: { staggerChildren: 0.12 } } };
+const fadeUp = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.25, 0.1, 0.25, 1] as const } },
+};
+
+interface TitleSlideProps {
+  slideIndex?: number;
+  totalSlides?: number;
+}
+
+const TitleSlide = ({ slideIndex, totalSlides }: TitleSlideProps) => {
   return (
-    <SlideLayout variant="dark">
-      {/* Gradient blob - anchored to bottom */}
+    <SlideLayout variant="dark" slideIndex={slideIndex} totalSlides={totalSlides}>
+      {/* Gradient blob */}
       <img
         src={gradientBlob}
         alt=""
         className="absolute right-[-100px] bottom-[-400px] w-[1000px] h-[1000px] opacity-50 pointer-events-none"
       />
 
-      {/* Subtle grid pattern - fades to bottom */}
+      {/* Logo glow */}
+      <div className="absolute top-[30px] left-[80px] w-[200px] h-[80px] bg-slide-primary/20 blur-[60px] rounded-full" />
+
+      {/* Grid */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
@@ -24,28 +39,33 @@ const TitleSlide = () => {
         }}
       />
 
-      {/* Logo top-left */}
+      {/* Logo */}
       <div className="absolute top-[60px] left-[100px]">
         <img src={logoWhite} alt="Niklas Volland" className="h-[44px]" />
       </div>
 
-      {/* Pills */}
+      {/* Pills - glassmorphism */}
       <div className="absolute top-[60px] right-[100px] flex gap-[14px]">
-        <span className="px-[24px] py-[10px] rounded-full border border-slide-fg/10 text-[16px] text-slide-muted">Keynote</span>
-        <span className="px-[24px] py-[10px] rounded-full border border-slide-fg/10 text-[16px] text-slide-muted">2025</span>
+        <span className="px-[24px] py-[10px] rounded-full bg-white/5 backdrop-blur-md border border-white/10 text-[16px] text-slide-muted">Keynote</span>
+        <span className="px-[24px] py-[10px] rounded-full bg-white/5 backdrop-blur-md border border-white/10 text-[16px] text-slide-muted">2025</span>
       </div>
 
-      {/* Main title */}
-      <div className="absolute inset-0 flex flex-col justify-center px-[100px]">
-        <h1 className="text-7xl font-bold tracking-tight leading-none max-w-[1200px] text-slide-fg">
+      {/* Main title - staggered */}
+      <motion.div
+        variants={container}
+        initial="initial"
+        animate="animate"
+        className="absolute inset-0 flex flex-col justify-center px-[100px]"
+      >
+        <motion.h1 variants={fadeUp} className="text-7xl font-bold tracking-tight leading-none max-w-[1200px] text-slide-fg">
           Präsentationstitel
           <br />
           <span className="text-slide-primary">hier einfügen</span>
-        </h1>
-        <p className="text-2xl text-slide-muted mt-[40px] max-w-[700px] font-light">
+        </motion.h1>
+        <motion.p variants={fadeUp} className="text-2xl text-slide-muted mt-[40px] max-w-[700px] font-light">
           Untertitel oder kurze Beschreibung deiner Präsentation
-        </p>
-      </div>
+        </motion.p>
+      </motion.div>
 
       {/* Bottom bar */}
       <div className="absolute bottom-[60px] left-[100px] right-[100px] flex justify-between items-center">

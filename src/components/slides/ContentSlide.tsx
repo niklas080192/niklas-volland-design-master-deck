@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import SlideLayout from "./SlideLayout";
+import RevealItem from "./RevealItem";
 import logoWhite from "@/assets/logo-white-wide.png";
 
 const container = { animate: { transition: { staggerChildren: 0.1 } } };
@@ -13,6 +14,7 @@ interface ContentSlideProps {
   bullets?: string[];
   slideIndex?: number;
   totalSlides?: number;
+  revealStep?: number;
 }
 
 const ContentSlide = ({
@@ -25,6 +27,7 @@ const ContentSlide = ({
   ],
   slideIndex,
   totalSlides,
+  revealStep,
 }: ContentSlideProps) => {
   return (
     <SlideLayout variant="dark" slideIndex={slideIndex} totalSlides={totalSlides}>
@@ -45,20 +48,21 @@ const ContentSlide = ({
 
         <div className="space-y-[32px] max-w-[1400px]">
           {bullets.map((bullet, i) => (
-            <motion.div
-              key={i}
-              variants={fadeUp}
-              className="flex items-start gap-[24px] group"
-            >
-              <div className="mt-[4px] w-[32px] h-[32px] rounded-lg bg-white/5 backdrop-blur-md border border-white/10 flex items-center justify-center shrink-0">
-                <span className="text-[14px] text-slide-primary font-semibold">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-              </div>
-              <p className="text-2xl font-light leading-relaxed text-slide-fg/90">
-                {bullet}
-              </p>
-            </motion.div>
+            <RevealItem key={i} step={i + 1} currentStep={revealStep}>
+              <motion.div
+                variants={fadeUp}
+                className="flex items-start gap-[24px] group"
+              >
+                <div className="mt-[4px] w-[32px] h-[32px] rounded-lg bg-white/5 backdrop-blur-md border border-white/10 flex items-center justify-center shrink-0">
+                  <span className="text-[14px] text-slide-primary font-semibold">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                </div>
+                <p className="text-2xl font-light leading-relaxed text-slide-fg/90">
+                  {bullet}
+                </p>
+              </motion.div>
+            </RevealItem>
           ))}
         </div>
       </motion.div>

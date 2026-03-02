@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import SlideLayout from "./SlideLayout";
+import RevealItem from "./RevealItem";
 import logoWhite from "@/assets/logo-white-wide.png";
 
 const container = { animate: { transition: { staggerChildren: 0.12 } } };
@@ -18,6 +19,7 @@ interface StatsSlideProps {
   stats?: Stat[];
   slideIndex?: number;
   totalSlides?: number;
+  revealStep?: number;
 }
 
 const StatsSlide = ({
@@ -29,6 +31,7 @@ const StatsSlide = ({
   ],
   slideIndex,
   totalSlides,
+  revealStep,
 }: StatsSlideProps) => {
   return (
     <SlideLayout variant="dark" slideIndex={slideIndex} totalSlides={totalSlides}>
@@ -47,20 +50,21 @@ const StatsSlide = ({
 
         <div className="flex gap-[40px]">
           {stats.map((stat, i) => (
-            <motion.div
-              key={i}
-              variants={fadeUp}
-              className="flex-1 p-[48px] rounded-[24px] bg-white/5 backdrop-blur-md border border-white/10 relative overflow-hidden"
-            >
-              {/* Top accent bar */}
-              <div className="absolute top-0 left-0 right-0 h-[3px] bg-slide-primary opacity-60" />
-              {/* Glow behind number */}
-              <div className="absolute top-[20px] left-[30px] w-[120px] h-[80px] bg-slide-primary/15 blur-[50px] rounded-full" />
-              <span className="text-7xl font-bold text-slide-primary block mb-[16px] relative z-10">
-                {stat.value}
-              </span>
-              <span className="text-xl text-slide-muted font-light">{stat.label}</span>
-            </motion.div>
+            <RevealItem key={i} step={i + 1} currentStep={revealStep}>
+              <motion.div
+                variants={fadeUp}
+                className="flex-1 p-[48px] rounded-[24px] bg-white/5 backdrop-blur-md border border-white/10 relative overflow-hidden"
+              >
+                {/* Top accent bar */}
+                <div className="absolute top-0 left-0 right-0 h-[3px] bg-slide-primary opacity-60" />
+                {/* Glow behind number */}
+                <div className="absolute top-[20px] left-[30px] w-[120px] h-[80px] bg-slide-primary/15 blur-[50px] rounded-full" />
+                <span className="text-7xl font-bold text-slide-primary block mb-[16px] relative z-10">
+                  {stat.value}
+                </span>
+                <span className="text-xl text-slide-muted font-light">{stat.label}</span>
+              </motion.div>
+            </RevealItem>
           ))}
         </div>
       </motion.div>

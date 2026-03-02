@@ -26,7 +26,7 @@ const SectionSlide = ({
 
       <div className="absolute inset-0 flex flex-col justify-center pl-[160px]">
         <div className="flex items-center gap-[16px] mb-[24px]">
-          <span className="px-[16px] py-[6px] rounded-full border border-slide-primary/30 text-[14px] text-slide-primary font-medium">
+          <span className="px-[22px] py-[9px] rounded-full border border-slide-primary/30 text-[15px] text-slide-primary font-medium">
             Section {number}
           </span>
         </div>

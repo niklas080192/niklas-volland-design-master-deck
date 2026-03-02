@@ -25,7 +25,7 @@ const ContentSlide = ({
 
       <div className="absolute inset-0 flex flex-col justify-center px-[100px]">
         <div className="flex items-center gap-[16px] mb-[16px]">
-          <span className="px-[14px] py-[5px] rounded-full border border-slide-fg/10 text-[13px] text-slide-muted">Overview</span>
+          <span className="px-[20px] py-[8px] rounded-full border border-slide-fg/10 text-[15px] text-slide-muted">Overview</span>
         </div>
         <h2 className="text-5xl font-bold tracking-tight mb-[60px] text-slide-fg">{title}</h2>
 

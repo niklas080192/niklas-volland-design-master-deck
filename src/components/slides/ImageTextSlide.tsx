@@ -22,7 +22,7 @@ const ImageTextSlide = ({
       <div className="absolute inset-0 flex items-center px-[100px] gap-[80px]">
         {/* Left: text */}
         <div className="flex-1">
-          <span className="inline-block px-[14px] py-[5px] rounded-full border border-slide-fg/10 text-[13px] text-slide-muted mb-[20px]">Visual</span>
+          <span className="inline-block px-[20px] py-[8px] rounded-full border border-slide-fg/10 text-[15px] text-slide-muted mb-[20px]">Visual</span>
           <h2 className="text-5xl font-bold tracking-tight mb-[32px] text-slide-fg">{title}</h2>
           <p className="text-xl text-slide-muted font-light leading-relaxed max-w-[600px]">
             {text}

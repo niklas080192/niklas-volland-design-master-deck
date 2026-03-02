@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import SlideLayout from "./SlideLayout";
+import RevealItem from "./RevealItem";
 import logoWhite from "@/assets/logo-white-wide.png";
 
 const container = { animate: { transition: { staggerChildren: 0.12 } } };
@@ -16,6 +17,7 @@ interface TwoColumnSlideProps {
   rightItems?: string[];
   slideIndex?: number;
   totalSlides?: number;
+  revealStep?: number;
 }
 
 const TwoColumnSlide = ({
@@ -26,6 +28,7 @@ const TwoColumnSlide = ({
   rightItems = ["Automatisierung", "Effiziente Workflows", "Qualitätsgesichert"],
   slideIndex,
   totalSlides,
+  revealStep,
 }: TwoColumnSlideProps) => {
   return (
     <SlideLayout variant="dark" slideIndex={slideIndex} totalSlides={totalSlides}>
@@ -45,24 +48,26 @@ const TwoColumnSlide = ({
         <div className="flex gap-[40px]">
           {[{ title: leftTitle, items: leftItems }, { title: rightTitle, items: rightItems }].map(
             (col, ci) => (
-              <motion.div key={ci} variants={fadeUp} className="flex-1 p-[48px] rounded-[24px] bg-white/5 backdrop-blur-md border border-white/10 relative overflow-hidden">
-                <div
-                  className="absolute top-0 left-0 right-0 h-[3px]"
-                  style={{ background: ci === 1 ? "hsl(var(--slide-primary))" : "hsl(var(--slide-muted))" }}
-                />
-                <div className="flex items-center gap-[12px] mb-[32px]">
-                  <span className="px-[12px] py-[4px] rounded-full bg-white/5 border border-white/10 text-[12px] text-slide-muted">{ci === 0 ? "A" : "B"}</span>
-                  <h3 className="text-2xl font-bold text-slide-fg">{col.title}</h3>
-                </div>
-                <div className="space-y-[24px]">
-                  {col.items.map((item, i) => (
-                    <div key={i} className="flex items-start gap-[16px]">
-                      <div className="mt-[8px] w-[8px] h-[8px] rounded-full bg-slide-primary shrink-0" />
-                      <p className="text-xl font-light text-slide-fg/85">{item}</p>
-                    </div>
-                  ))}
-                </div>
-              </motion.div>
+              <RevealItem key={ci} step={ci + 1} currentStep={revealStep}>
+                <motion.div variants={fadeUp} className="flex-1 p-[48px] rounded-[24px] bg-white/5 backdrop-blur-md border border-white/10 relative overflow-hidden">
+                  <div
+                    className="absolute top-0 left-0 right-0 h-[3px]"
+                    style={{ background: ci === 1 ? "hsl(var(--slide-primary))" : "hsl(var(--slide-muted))" }}
+                  />
+                  <div className="flex items-center gap-[12px] mb-[32px]">
+                    <span className="px-[12px] py-[4px] rounded-full bg-white/5 border border-white/10 text-[12px] text-slide-muted">{ci === 0 ? "A" : "B"}</span>
+                    <h3 className="text-2xl font-bold text-slide-fg">{col.title}</h3>
+                  </div>
+                  <div className="space-y-[24px]">
+                    {col.items.map((item, i) => (
+                      <div key={i} className="flex items-start gap-[16px]">
+                        <div className="mt-[8px] w-[8px] h-[8px] rounded-full bg-slide-primary shrink-0" />
+                        <p className="text-xl font-light text-slide-fg/85">{item}</p>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              </RevealItem>
             )
           )}
         </div>

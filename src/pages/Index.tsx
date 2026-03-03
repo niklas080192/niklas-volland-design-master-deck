@@ -74,14 +74,16 @@ const Index = () => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === "ArrowRight" || e.key === " ") { e.preventDefault(); next(); }
       if (e.key === "ArrowLeft") { e.preventDefault(); prev(); }
-      if (e.key === "Escape" && isFullscreen) { setIsFullscreen(false); }
-      if (e.key === "Escape" && showGrid) { setShowGrid(false); }
+      if (e.key === "Escape") {
+        if (showGrid) setShowGrid(false);
+        else if (isFullscreen) setIsFullscreen(false);
+      }
       if (e.key === "f" || e.key === "F5") { e.preventDefault(); toggleFullscreen(); }
-      if (e.key === "g") { setShowGrid((s) => !s); }
+      if (e.key === "g") setShowGrid((s) => !s);
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [next, prev, toggleFullscreen, showGrid]);
+  }, [next, prev, toggleFullscreen, showGrid, isFullscreen]);
 
   const renderSlide = (index: number, revealStep?: number) => {
     const cfg = slideConfigs[index];

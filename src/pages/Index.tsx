@@ -67,23 +67,14 @@ const Index = () => {
   }, []);
 
   const toggleFullscreen = useCallback(() => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen();
-    } else {
-      document.exitFullscreen();
-    }
-  }, []);
-
-  useEffect(() => {
-    const handler = () => setIsFullscreen(!!document.fullscreenElement);
-    document.addEventListener("fullscreenchange", handler);
-    return () => document.removeEventListener("fullscreenchange", handler);
+    setIsFullscreen((f) => !f);
   }, []);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === "ArrowRight" || e.key === " ") { e.preventDefault(); next(); }
       if (e.key === "ArrowLeft") { e.preventDefault(); prev(); }
+      if (e.key === "Escape" && isFullscreen) { setIsFullscreen(false); }
       if (e.key === "Escape" && showGrid) { setShowGrid(false); }
       if (e.key === "f" || e.key === "F5") { e.preventDefault(); toggleFullscreen(); }
       if (e.key === "g") { setShowGrid((s) => !s); }

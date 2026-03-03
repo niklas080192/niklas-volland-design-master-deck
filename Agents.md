@@ -491,7 +491,170 @@ Die Navigation in `Index.tsx` handled den Rest:
 
 ---
 
-## 8. Logo-Assets
+## 8. Presenter & Navigation
+
+Der Presenter ist die komplette UI in `src/pages/Index.tsx`, die Slides darstellt, navigiert und zwischen drei Ansichtsmodi wechselt.
+
+### 8.1 State
+
+```tsx
+const [current, setCurrent] = useState(0);         // Aktive Slide (0-basiert)
+const [currentStep, setCurrentStep] = useState(0);  // Aktueller Reveal-Step
+const [isFullscreen, setIsFullscreen] = useState(false);
+const [showGrid, setShowGrid] = useState(false);
+```
+
+### 8.2 Drei Ansichtsmodi
+
+#### Editor (Standard)
+
+```
+┌──────────┬──────────────────────────────────────────┐
+│ Sidebar  │  Toolbar (56px)                          │
+│ 200px    ├──────────────────────────────────────────┤
+│ Thumbs   │                                          │
+│          │  ◀  [ Slide Canvas ]  ▶                  │
+│          │     max 1200×675, rounded-xl              │
+│          │     shadow-2xl shadow-black/40            │
+│          │                                          │
+└──────────┴──────────────────────────────────────────┘
+```
+
+- **Sidebar:** `w-[200px]`, `border-r border-slide-fg/5`, Thumbnails mit `aspect-video`, `rounded-lg`
+- Aktive Slide: `border-slide-primary ring-1 ring-slide-primary/30`
+- Inaktiv: `border-slide-fg/10 hover:border-slide-fg/20`
+- Slide-Nummer: `absolute bottom-1 left-1.5 text-[10px] text-slide-muted`
+
+- **Toolbar:** `h-[56px]`, `border-b border-slide-fg/5`
+  - Links: `"Slide {current+1} / {totalSlides}"` + optional `"Step {currentStep} / {totalSteps}"` (rot)
+  - Rechts: Grid-Button (`Grid3X3` Icon, Shortcut G) + Fullscreen-Button (`Maximize` Icon, Shortcut F)
+
+- **Nav-Pfeile:** Links/rechts vom Canvas, `bg-slide-surface/80`, `rounded-full`, disabled bei erster/letzter Position
+
+#### Fullscreen
+
+```tsx
+<div className="fixed inset-0 bg-slide-bg cursor-none">
+  <div className="relative w-full h-full overflow-hidden">
+    {renderSlide(current, currentStep)}
+  </div>
+</div>
+```
+
+- Aktiviert via `document.documentElement.requestFullscreen()`
+- Schwarzer Hintergrund, kein Cursor (`cursor-none`)
+- Nur die Slide, keine UI-Elemente
+- Navigation nur per Tastatur (→/←/Space)
+
+#### Grid
+
+```tsx
+<div className="min-h-screen bg-slide-bg p-8">
+  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    {slideConfigs.map((_, i) => (
+      <button onClick={() => { goToSlide(i); setShowGrid(false); }}
+        className="relative aspect-video overflow-hidden rounded-xl border-2 transition-all hover:scale-[1.02]">
+        <div className="relative w-full h-full">{renderThumbnail(i)}</div>
+        <div className="absolute bottom-2 left-3 text-xs text-slide-muted font-medium bg-slide-bg/80 px-2 py-0.5 rounded">
+          {i + 1}
+        </div>
+      </button>
+    ))}
+  </div>
+</div>
+```
+
+- Überschrift "Alle Slides" + X-Button zum Schließen
+- Klick auf Thumbnail → navigiert zur Slide und schließt Grid
+- Aktive Slide: `border-slide-primary shadow-lg shadow-slide-primary/20`
+
+### 8.3 Navigation-Logik (next / prev)
+
+```tsx
+const next = useCallback(() => {
+  const cfg = slideConfigs[current];
+  if (cfg.totalSteps > 0 && currentStep < cfg.totalSteps) {
+    setCurrentStep((s) => s + 1);          // Nächster Reveal-Step
+  } else {
+    if (current < slideConfigs.length - 1) {
+      setCurrent((c) => c + 1);            // Nächste Slide
+      setCurrentStep(0);                   // Steps zurücksetzen
+    }
+  }
+}, [current, currentStep]);
+
+const prev = useCallback(() => {
+  if (config.totalSteps > 0 && currentStep > 0) {
+    setCurrentStep((s) => s - 1);          // Vorheriger Step
+  } else if (current > 0) {
+    const prevConfig = slideConfigs[current - 1];
+    setCurrent((c) => c - 1);              // Vorherige Slide
+    setCurrentStep(prevConfig.totalSteps); // Letzten Step zeigen
+  }
+}, [current, currentStep, config]);
+```
+
+**Wichtig:** `prev()` setzt `currentStep` auf `prevConfig.totalSteps`, damit man beim Zurückgehen den letzten sichtbaren Zustand der vorherigen Slide sieht.
+
+### 8.4 renderSlide vs. renderThumbnail
+
+```tsx
+// Hauptansicht: revealStep wird weitergegeben
+const renderSlide = (index: number, revealStep?: number) => {
+  const cfg = slideConfigs[index];
+  return cfg.render({
+    slideIndex: index,
+    totalSlides,
+    revealStep: cfg.totalSteps > 0 ? revealStep : undefined,
+  });
+};
+
+// Thumbnails/Grid: revealStep = undefined → alles sichtbar
+const renderThumbnail = (index: number) => {
+  const cfg = slideConfigs[index];
+  return cfg.render({
+    slideIndex: index,
+    totalSlides,
+    revealStep: undefined,  // Alle RevealItems sichtbar
+  });
+};
+```
+
+### 8.5 Slide-Übergang (AnimatePresence)
+
+```tsx
+<AnimatePresence mode="wait">
+  <motion.div
+    key={current}
+    initial={{ opacity: 0, scale: 0.98, filter: "blur(4px)" }}
+    animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+    exit={{ opacity: 0, scale: 1.02, filter: "blur(4px)" }}
+    transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
+    className="relative w-full h-full"
+  >
+    {renderSlide(current, currentStep)}
+  </motion.div>
+</AnimatePresence>
+```
+
+- `mode="wait"`: Exit-Animation fertig, bevor Enter startet
+- Scale: `0.98 → 1 → 1.02` (leichter Zoom-Effekt)
+- Blur: `4px → 0 → 4px`
+- Duration: `0.35s`, Cubic-Bezier: `[0.25, 0.1, 0.25, 1]`
+
+### 8.6 Keyboard-Shortcuts
+
+| Taste | Aktion |
+|---|---|
+| `→` / `Space` | Nächster Step oder nächste Slide |
+| `←` | Vorheriger Step oder vorherige Slide |
+| `F` / `F5` | Fullscreen toggle |
+| `G` | Grid-Ansicht toggle |
+| `Esc` | Grid schließen |
+
+---
+
+## 9. Logo-Assets
 
 | Datei | Verwendung |
 |---|---|
@@ -503,7 +666,7 @@ Die Navigation in `Index.tsx` handled den Rest:
 
 ---
 
-## 9. Regeln & Konventionen
+## 10. Regeln & Konventionen
 
 ### DO ✅
 
@@ -528,7 +691,7 @@ Die Navigation in `Index.tsx` handled den Rest:
 
 ---
 
-## 10. Neue Slide erstellen – Schritt für Schritt
+## 11. Neue Slide erstellen – Schritt für Schritt
 
 1. **Datei erstellen:** `src/components/slides/MeineSlide.tsx`
 2. **Imports:** `motion` von framer-motion, `SlideLayout`, ggf. `RevealItem`, Logo-Assets
@@ -614,13 +777,3 @@ import CustomSlide from "@/components/slides/CustomSlide";
 ```
 
 ---
-
-## 11. Tastatur-Shortcuts
-
-| Taste | Aktion |
-|---|---|
-| `→` / `Space` | Nächster Step oder nächste Slide |
-| `←` | Vorheriger Step oder vorherige Slide |
-| `F` / `F5` | Fullscreen toggle |
-| `G` | Grid-Ansicht toggle |
-| `Esc` | Grid schließen |

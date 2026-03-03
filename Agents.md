@@ -710,9 +710,11 @@ const [showGrid, setShowGrid] = useState(false);
 </div>
 ```
 
-- Aktiviert via `document.documentElement.requestFullscreen()`
+- **CSS-basiert** — kein `requestFullscreen()`, sondern rein per React-State (`isFullscreen`) und `fixed inset-0`
+- Browser-Tabs bleiben sichtbar, kein nativer Vollbild-Modus
 - Schwarzer Hintergrund, kein Cursor (`cursor-none`)
 - Nur die Slide, keine UI-Elemente
+- Toggle via `F`-Taste oder Button, Schließen via `Escape`
 
 #### Grid
 
@@ -1158,15 +1160,19 @@ function goTo(i) {
   slides[current].classList.add('active');
 }
 
+let isFullscreen = false;
 document.addEventListener('keydown', e => {
   if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goTo(current + 1); }
   if (e.key === 'ArrowLeft') { e.preventDefault(); goTo(current - 1); }
   if (e.key === 'f' || e.key === 'F5') {
     e.preventDefault();
-    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-    else document.exitFullscreen();
+    isFullscreen = !isFullscreen;
+    document.body.classList.toggle('fullscreen', isFullscreen);
   }
-  if (e.key === 'Escape' && document.fullscreenElement) document.exitFullscreen();
+  if (e.key === 'Escape' && isFullscreen) {
+    isFullscreen = false;
+    document.body.classList.remove('fullscreen');
+  }
 });
 </script>
 </body>

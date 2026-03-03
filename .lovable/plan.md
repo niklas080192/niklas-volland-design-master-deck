@@ -1,46 +1,77 @@
 
 
-# Plan: Presenter-System in Agents.md dokumentieren
+# Plan: Agents.md praezisieren — exakte Design-Abbildung
 
-## Was fehlt
+## Problem
 
-Die Agents.md beschreibt aktuell nur die Slide-Templates und Design-Tokens, aber **nicht den Presenter** — also die komplette `Index.tsx` mit Sidebar, Toolbar, Grid-View, Fullscreen-Modus, Step-Navigation und Keyboard-Shortcuts. Ein Agent, der eine Praesentation baut, muss auch wissen wie die Praesentation **praesentiert** wird.
+Die Agents.md fuehrt zu falschem Output weil sie zu abstrakt ist. Konkret fehlen:
+- Verbot von Gradient-Text (groeßter Fehler im generierten HTML)
+- Exakte Werte pro Slide (Blob-Position, Glow, Pill-Groessen variieren)
+- Standalone-HTML-Boilerplate fuer externe Tools
+- Mehrere falsche/ungenaue Werte
 
-## Aenderungen an Agents.md
+## Aenderungen
 
-### Neue Sektion "Presenter & Navigation" (nach Sektion 7, vor Logo-Assets)
+### 1. Neue Sektion "HARD RULES" ganz oben (nach Tech-Stack, vor Design Tokens)
 
-Dokumentiert:
+Prominente Regeln die NIEMALS verletzt werden duerfen:
 
-1. **Drei Ansichtsmodi:**
-   - **Editor** (Standard): Sidebar links (200px, Thumbnails), Toolbar oben (56px), Slide-Canvas mittig (max 1200x675, rounded-xl, shadow), Nav-Pfeile links/rechts
-   - **Fullscreen**: `document.documentElement.requestFullscreen()`, schwarzer BG, cursor-none, nur die Slide
-   - **Grid**: Alle Slides als Thumbnail-Grid (2/3/4 Spalten responsive), Klick navigiert zur Slide
+- **KEIN Gradient auf Text** — Stat-Werte sind `text-slide-primary` (solides Rot), Titel sind `text-slide-fg` (Weiss). Niemals `background-clip: text` oder `text-gradient`.
+- **Logo ist IMMER ein Bild** (PNG), nie Text-Rendering
+- **Noise-Opacity exakt 0.035** (3.5%)
+- **Progress Bar exakt 1px hoch, opacity 0.4**
+- **Alle Pixel-Werte exakt wie dokumentiert** — keine Approximationen
 
-2. **Navigation-Logik (next/prev):**
-   - `next()`: Wenn `currentStep < totalSteps` → Step++, sonst naechste Slide mit `currentStep = 0`
-   - `prev()`: Wenn `currentStep > 0` → Step--, sonst vorherige Slide mit `currentStep = prevSlide.totalSteps`
-   - Thumbnails/Grid: `revealStep = undefined` (alles sichtbar)
+### 2. Pill-Groessen korrigieren (Sektion 5.1)
 
-3. **Toolbar-Elemente:**
-   - Links: "Slide X / Y" + optional "Step X / Y" (wenn `totalSteps > 0`)
-   - Rechts: Grid-Button (G), Fullscreen-Button (F)
+Zwei Varianten dokumentieren:
+- **Title-Pill** (TitleSlide, ClosingSlide): `px-[24px] py-[10px] text-[16px]` bzw. ClosingSlide `py-[12px] text-[18px]`
+- **Content-Pill** (alle anderen): `px-[20px] py-[8px] text-[15px]`
 
-4. **Sidebar:**
-   - 200px breit, Thumbnails mit aspect-video, aktive Slide mit `border-slide-primary` + ring
+### 3. Pro-Slide exakte Layout-Spezifikation (Sektion 4 erweitern)
 
-5. **Slide-Uebergang (AnimatePresence):**
-   - Exakte motion-Werte: `opacity 0→1`, `scale 0.98→1→1.02`, `blur 4px→0→4px`, duration 0.35s
+Jedes Template bekommt eine vollstaendige Positionstabelle statt nur Props-Interface. Beispiel fuer TitleSlide:
 
-6. **Keyboard-Shortcuts** (bereits in Sektion 11, aber hier im Kontext der Navigation nochmal referenziert)
+| Element | Position/Klassen |
+|---------|-----------------|
+| Blob | `right-[-100px] bottom-[-400px] w-[1000px] h-[1000px] opacity-50` |
+| Logo-Glow | `top-[30px] left-[80px] w-[200px] h-[80px] bg-slide-primary/20 blur-[60px]` |
+| Logo | `top-[60px] left-[100px] h-[44px]` (wide, volle Opacity) |
+| Pills | `top-[60px] right-[100px] gap-[14px]`, grosse Variante |
+| Titel | `text-7xl font-bold max-w-[1200px] text-slide-fg` |
+| Untertitel | `text-2xl text-slide-muted mt-[40px] max-w-[700px] font-light` |
+| Bottom Bar | `bottom-[60px] left-[100px] right-[100px]` |
 
-### Exakter Code-Block fuer `renderSlide` und `renderThumbnail`
+Gleiche Detailtiefe fuer alle 9 Slides, inklusive:
+- QuoteSlide: `text-[180px]` fuer Anfuehrungszeichen (nicht text-8xl), `px-[200px]` Content-Padding
+- ContentSlide: stagger `0.1` (nicht 0.12)
+- ClosingSlide: groessere Pills `py-[12px] text-[18px]`, Blob zentriert `bottom-[-500px] w-[1200px] opacity-30`
+- SectionSlide: Pill-Text ist `text-slide-primary font-medium` (nicht muted)
+- VideoSlide: Play-Button `100×100` Kreis, Icon `40×40`, deutscher Text
+- ImageTextSlide: Container `rounded-[32px]` (nicht 24px)
 
-Damit der Agent versteht wie `revealStep` an Slides weitergegeben wird vs. Thumbnails.
+### 4. Standalone-HTML-Boilerplate (neue Sektion 12)
+
+Fuer externe Tools die kein React nutzen — ein komplettes Copy-Paste Template mit:
+- Alle CSS Custom Properties
+- `.slide-noise`, `.slide-progress-bar` Klassen exakt aus `index.css`
+- Font-Scaling Overrides
+- Scaling-Engine (JS: berechnet Scale-Faktor basierend auf Viewport)
+- Keyboard-Navigation (Arrow, Space, F, Esc)
+- Slide-Container Struktur
+- Beispiel-Slides (Title, Content, Stats) als reines HTML/CSS
+
+### 5. DON'T-Liste erweitern (Sektion 10)
+
+Neue Eintraege:
+- **Kein `background-clip: text`** oder CSS-Gradient auf Text
+- **Kein Text-Logo** — immer `<img>` mit PNG
+- **Keine abweichende Noise-Opacity** (nur 0.035)
+- **Kein `text-white`** — immer `text-slide-fg`
 
 ## Betroffene Datei
 
 | Datei | Aktion |
 |-------|--------|
-| `Agents.md` | Neue Sektion 8 "Presenter & Navigation" einfuegen, bestehende Sektionen 8-11 werden zu 9-12 |
+| `Agents.md` | Komplett ueberarbeiten mit allen Korrekturen |
 

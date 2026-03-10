@@ -1,6 +1,8 @@
 import { useState, useCallback, useEffect, ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, Maximize, Grid3X3, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, Maximize, Grid3X3, X, Download, Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import { exportPdf } from "@/utils/exportPdf";
 import TitleSlide from "@/components/slides/TitleSlide";
 import SectionSlide from "@/components/slides/SectionSlide";
 import ContentSlide from "@/components/slides/ContentSlide";
@@ -36,6 +38,24 @@ const Index = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showGrid, setShowGrid] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+
+  const handleExportPdf = useCallback(async () => {
+    if (isExporting) return;
+    setIsExporting(true);
+    const toastId = toast.loading("PDF wird erstellt…", { description: "Slide 1 / " + totalSlides });
+    try {
+      await exportPdf(slideConfigs, (cur, total) => {
+        toast.loading(`PDF wird erstellt…`, { id: toastId, description: `Slide ${cur} / ${total}` });
+      });
+      toast.success("PDF heruntergeladen!", { id: toastId, description: undefined });
+    } catch (err) {
+      console.error(err);
+      toast.error("PDF-Export fehlgeschlagen", { id: toastId, description: String(err) });
+    } finally {
+      setIsExporting(false);
+    }
+  }, [isExporting]);
 
   const config = slideConfigs[current];
 
@@ -178,6 +198,14 @@ const Index = () => {
             )}
           </div>
           <div className="flex items-center gap-2">
+            <button
+              onClick={handleExportPdf}
+              disabled={isExporting}
+              className="p-2 rounded-lg text-slide-muted hover:text-slide-fg hover:bg-slide-surface transition-colors disabled:opacity-50"
+              title="PDF Download"
+            >
+              {isExporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+            </button>
             <button
               onClick={() => setShowGrid(true)}
               className="p-2 rounded-lg text-slide-muted hover:text-slide-fg hover:bg-slide-surface transition-colors"

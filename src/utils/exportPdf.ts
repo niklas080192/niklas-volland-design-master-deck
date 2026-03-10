@@ -95,6 +95,21 @@ const captureSlide = async (
   // Extra settle time
   await new Promise((r) => setTimeout(r, 300));
 
+  // Fix html2canvas limitations: hide noise overlay (SVG filter), fix grid overlays (mask-image not supported)
+  // Hide noise textures
+  wrapper.querySelectorAll<HTMLElement>('.slide-noise').forEach(el => {
+    el.style.display = 'none';
+  });
+  // Remove mask-image from grid overlays (html2canvas ignores it, showing grid at full opacity)
+  wrapper.querySelectorAll<HTMLElement>('[style*="maskImage"], [style*="mask-image"]').forEach(el => {
+    el.style.display = 'none';
+  });
+  // Fix blur filters - html2canvas doesn't render CSS blur well
+  wrapper.querySelectorAll<HTMLElement>('[class*="blur-"]').forEach(el => {
+    el.style.filter = 'none';
+    el.style.opacity = '0.3';
+  });
+
   const canvas = await html2canvas(wrapper, {
     width: SLIDE_W,
     height: SLIDE_H,

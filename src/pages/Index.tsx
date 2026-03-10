@@ -38,6 +38,24 @@ const Index = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showGrid, setShowGrid] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+
+  const handleExportPdf = useCallback(async () => {
+    if (isExporting) return;
+    setIsExporting(true);
+    const toastId = toast.loading("PDF wird erstellt…", { description: "Slide 1 / " + totalSlides });
+    try {
+      await exportPdf(slideConfigs, (cur, total) => {
+        toast.loading(`PDF wird erstellt…`, { id: toastId, description: `Slide ${cur} / ${total}` });
+      });
+      toast.success("PDF heruntergeladen!", { id: toastId, description: undefined });
+    } catch (err) {
+      console.error(err);
+      toast.error("PDF-Export fehlgeschlagen", { id: toastId, description: String(err) });
+    } finally {
+      setIsExporting(false);
+    }
+  }, [isExporting]);
 
   const config = slideConfigs[current];
 

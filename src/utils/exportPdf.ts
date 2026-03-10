@@ -13,6 +13,36 @@ const SLIDE_W = 1920;
 const SLIDE_H = 1080;
 
 /**
+ * Copy all CSS custom properties from :root to a target element
+ */
+const copyCSSCustomProperties = (target: HTMLElement) => {
+  const rootStyles = getComputedStyle(document.documentElement);
+  const allSheets = Array.from(document.styleSheets);
+
+  // Collect all --var names from stylesheets
+  const varNames = new Set<string>();
+  for (const sheet of allSheets) {
+    try {
+      for (const rule of Array.from(sheet.cssRules)) {
+        if (rule instanceof CSSStyleRule && rule.selectorText === ":root") {
+          for (const prop of Array.from(rule.style)) {
+            if (prop.startsWith("--")) varNames.add(prop);
+          }
+        }
+      }
+    } catch {
+      // Cross-origin sheets — skip
+    }
+  }
+
+  // Apply each custom property to the target
+  for (const name of varNames) {
+    const value = rootStyles.getPropertyValue(name).trim();
+    if (value) target.style.setProperty(name, value);
+  }
+};
+
+/**
  * Wait for all images inside a container to finish loading.
  */
 const waitForImages = (container: HTMLElement): Promise<void[]> => {
@@ -30,7 +60,7 @@ const waitForImages = (container: HTMLElement): Promise<void[]> => {
 };
 
 /**
- * Render a single slide into an off-screen container and capture it as a canvas.
+ * Render a single slide into an on-screen (but visually hidden) container and capture it.
  */
 const captureSlide = async (
   config: SlideConfig,
@@ -41,27 +71,45 @@ const captureSlide = async (
   // Clear previous content
   container.innerHTML = "";
 
+  // Create a wrapper div for this slide's React root
+  const wrapper = document.createElement("div");
+  wrapper.style.width = `${SLIDE_W}px`;
+  wrapper.style.height = `${SLIDE_H}px`;
+  wrapper.style.position = "relative";
+  wrapper.style.overflow = "hidden";
+  container.appendChild(wrapper);
+
   // Render slide with all steps revealed
   const revealStep = config.totalSteps > 0 ? config.totalSteps : undefined;
   const element = config.render({ slideIndex: index, totalSlides, revealStep });
 
-  const root = createRoot(container);
+  const root = createRoot(wrapper);
   root.render(element as any);
 
-  // Wait for React to flush + images to load
+  // Wait for React flush
+  await new Promise((r) => setTimeout(r, 500));
+  // Wait for images
+  await waitForImages(wrapper);
+  // Wait for fonts
+  await document.fonts.ready;
+  // Extra settle time
   await new Promise((r) => setTimeout(r, 300));
-  await waitForImages(container);
-  // Extra settle time for fonts
-  await new Promise((r) => setTimeout(r, 200));
 
-  const canvas = await html2canvas(container, {
+  const canvas = await html2canvas(wrapper, {
     width: SLIDE_W,
     height: SLIDE_H,
     scale: 2,
     useCORS: true,
     allowTaint: true,
-    backgroundColor: null,
+    backgroundColor: "#121212",
     logging: false,
+    // Ensure we capture the element in its actual position
+    x: 0,
+    y: 0,
+    scrollX: 0,
+    scrollY: 0,
+    windowWidth: SLIDE_W,
+    windowHeight: SLIDE_H,
   });
 
   root.unmount();
@@ -72,22 +120,35 @@ export const exportPdf = async (
   slideConfigs: SlideConfig[],
   onProgress?: (current: number, total: number) => void
 ): Promise<void> => {
-  // Create off-screen container at native slide resolution
+  // Wait for fonts before starting
+  await document.fonts.ready;
+
+  // Create container — on-screen but visually hidden (not off-screen, so html2canvas works)
   const container = document.createElement("div");
   Object.assign(container.style, {
     position: "fixed",
-    left: "-9999px",
     top: "0",
+    left: "0",
     width: `${SLIDE_W}px`,
     height: `${SLIDE_H}px`,
     overflow: "hidden",
-    zIndex: "-1",
+    opacity: "0",
+    pointerEvents: "none",
+    zIndex: "-9999",
   });
+
+  // Copy CSS custom properties so slide tokens work
+  copyCSSCustomProperties(container);
+  // Set font family explicitly
+  container.style.fontFamily = "'DM Sans', system-ui, sans-serif";
+
   document.body.appendChild(container);
 
-  // PDF in landscape 16:9 (mm units, 254mm × 142.875mm ≈ 10"×5.625")
-  const pdfW = 508;
-  const pdfH = 285.75;
+  // PDF: 16:9 landscape, use point units (1pt = 1/72 inch)
+  // 1920×1080 at 72dpi → 1920pt × 1080pt, but that's huge.
+  // Use mm: 338.67mm × 190.5mm (≈ standard 16:9)
+  const pdfW = 338.667;
+  const pdfH = 190.5;
   const pdf = new jsPDF({ orientation: "landscape", unit: "mm", format: [pdfW, pdfH] });
 
   const totalSlides = slideConfigs.length;
@@ -97,10 +158,10 @@ export const exportPdf = async (
       onProgress?.(i + 1, totalSlides);
 
       const canvas = await captureSlide(slideConfigs[i], i, totalSlides, container);
-      const imgData = canvas.toDataURL("image/png");
+      const imgData = canvas.toDataURL("image/jpeg", 0.95);
 
       if (i > 0) pdf.addPage([pdfW, pdfH], "landscape");
-      pdf.addImage(imgData, "PNG", 0, 0, pdfW, pdfH);
+      pdf.addImage(imgData, "JPEG", 0, 0, pdfW, pdfH);
     }
 
     pdf.save("presentation.pdf");

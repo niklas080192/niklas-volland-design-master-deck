@@ -42,7 +42,7 @@ const ContentSlide = ({
         className="absolute inset-0 flex flex-col justify-center px-[100px]"
       >
         <motion.div variants={fadeUp} className="flex items-center gap-[16px] mb-[16px]">
-          <span className="px-[20px] py-[8px] rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-[15px] text-slide-muted">Overview</span>
+          <span className="inline-flex items-center justify-center px-[20px] py-[8px] rounded-full bg-white/15 border border-white/20 text-[15px] text-slide-muted leading-none">Overview</span>
         </motion.div>
         <motion.h2 variants={fadeUp} className="text-5xl font-bold tracking-tight mb-[60px] text-slide-fg">{title}</motion.h2>
 

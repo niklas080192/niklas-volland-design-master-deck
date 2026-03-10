@@ -53,7 +53,7 @@ const StatsSlide = ({
             <RevealItem key={i} step={i + 1} currentStep={revealStep}>
               <motion.div
                 variants={fadeUp}
-                className="flex-1 p-[48px] rounded-[24px] bg-white/5 backdrop-blur-md border border-white/10 relative overflow-hidden"
+                className="flex-1 p-[48px] rounded-[24px] bg-white/10 border border-white/15 relative overflow-hidden"
               >
                 {/* Top accent bar */}
                 <div className="absolute top-0 left-0 right-0 h-[3px] bg-slide-primary opacity-60" />

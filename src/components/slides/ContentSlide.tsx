@@ -53,7 +53,7 @@ const ContentSlide = ({
                 variants={fadeUp}
                 className="flex items-start gap-[24px] group"
               >
-                <div className="mt-[4px] w-[32px] h-[32px] rounded-lg bg-white/5 backdrop-blur-md border border-white/10 flex items-center justify-center shrink-0">
+                <div className="mt-[4px] w-[32px] h-[32px] rounded-lg bg-white/15 border border-white/20 flex items-center justify-center shrink-0">
                   <span className="text-[14px] text-slide-primary font-semibold">
                     {String(i + 1).padStart(2, "0")}
                   </span>

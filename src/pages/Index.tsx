@@ -199,6 +199,14 @@ const Index = () => {
           </div>
           <div className="flex items-center gap-2">
             <button
+              onClick={handleExportPdf}
+              disabled={isExporting}
+              className="p-2 rounded-lg text-slide-muted hover:text-slide-fg hover:bg-slide-surface transition-colors disabled:opacity-50"
+              title="PDF Download"
+            >
+              {isExporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+            </button>
+            <button
               onClick={() => setShowGrid(true)}
               className="p-2 rounded-lg text-slide-muted hover:text-slide-fg hover:bg-slide-surface transition-colors"
               title="Grid view (G)"

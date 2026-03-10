@@ -46,8 +46,8 @@ const TitleSlide = ({ slideIndex, totalSlides }: TitleSlideProps) => {
 
       {/* Pills - glassmorphism */}
       <div className="absolute top-[60px] right-[100px] flex gap-[14px]">
-        <span className="px-[24px] py-[10px] rounded-full bg-white/5 backdrop-blur-md border border-white/10 text-[16px] text-slide-muted">Keynote</span>
-        <span className="px-[24px] py-[10px] rounded-full bg-white/5 backdrop-blur-md border border-white/10 text-[16px] text-slide-muted">2025</span>
+        <span className="px-[24px] py-[10px] rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-[16px] text-slide-muted">Keynote</span>
+        <span className="px-[24px] py-[10px] rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-[16px] text-slide-muted">2025</span>
       </div>
 
       {/* Main title - staggered */}

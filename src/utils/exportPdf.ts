@@ -109,6 +109,14 @@ const captureSlide = async (
     el.style.filter = 'none';
     el.style.opacity = '0.3';
   });
+  // Fix backdrop-filter (glassmorphism) - html2canvas ignores it, make pills more opaque
+  wrapper.querySelectorAll<HTMLElement>('[class*="backdrop-blur"]').forEach(el => {
+    el.style.backdropFilter = 'none';
+    el.style.WebkitBackdropFilter = 'none';
+    // Increase background opacity for visibility without backdrop-blur
+    const bg = getComputedStyle(el).backgroundColor;
+    if (bg) el.style.backgroundColor = bg.replace(/[\d.]+\)$/, '0.15)');
+  });
 
   const canvas = await html2canvas(wrapper, {
     width: SLIDE_W,

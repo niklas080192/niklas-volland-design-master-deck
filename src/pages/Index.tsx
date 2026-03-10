@@ -1,6 +1,8 @@
 import { useState, useCallback, useEffect, ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, Maximize, Grid3X3, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, Maximize, Grid3X3, X, Download, Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import { exportPdf } from "@/utils/exportPdf";
 import TitleSlide from "@/components/slides/TitleSlide";
 import SectionSlide from "@/components/slides/SectionSlide";
 import ContentSlide from "@/components/slides/ContentSlide";

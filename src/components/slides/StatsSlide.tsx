@@ -45,7 +45,7 @@ const StatsSlide = ({
         animate="animate"
         className="absolute inset-0 flex flex-col justify-center px-[100px]"
       >
-        <motion.span variants={fadeUp} className="inline-block px-[20px] py-[8px] rounded-full bg-white/5 backdrop-blur-md border border-white/10 text-[15px] text-slide-muted mb-[20px] w-fit">Metrics</motion.span>
+        <motion.span variants={fadeUp} className="inline-flex items-center justify-center px-[20px] py-[8px] rounded-full bg-white/15 border border-white/20 text-[15px] text-slide-muted leading-none mb-[20px] w-fit">Metrics</motion.span>
         <motion.h2 variants={fadeUp} className="text-5xl font-bold tracking-tight mb-[80px] text-slide-fg">{title}</motion.h2>
 
         <div className="flex gap-[40px]">
@@ -53,7 +53,7 @@ const StatsSlide = ({
             <RevealItem key={i} step={i + 1} currentStep={revealStep}>
               <motion.div
                 variants={fadeUp}
-                className="flex-1 p-[48px] rounded-[24px] bg-white/5 backdrop-blur-md border border-white/10 relative overflow-hidden"
+                className="flex-1 p-[48px] rounded-[24px] bg-white/10 border border-white/15 relative overflow-hidden"
               >
                 {/* Top accent bar */}
                 <div className="absolute top-0 left-0 right-0 h-[3px] bg-slide-primary opacity-60" />
